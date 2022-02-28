@@ -9,7 +9,6 @@ async function bootstrap() {
     .setTitle('ggtech test')
     .setDescription('movie api for ggtech test')
     .setVersion('1.0')
-    .addTag('movies')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
