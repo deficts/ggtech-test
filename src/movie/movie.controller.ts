@@ -8,16 +8,18 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { InjectConnection } from '@nestjs/mongoose';
-import { Connection, Schema as MongooseSchema } from 'mongoose';
+import { Connection } from 'mongoose';
 import { CreateMovieDto } from './dto/createMovie.dto';
 import { MovieService } from './movie.service';
 import { ApiOperation } from '@nestjs/swagger';
+import { PaginationParams } from './dto/pagination.dto';
 
-@Controller('movies')
+@Controller('movie')
 export class MovieController {
   constructor(
     @InjectConnection() private readonly mongoConnection: Connection,
@@ -26,15 +28,19 @@ export class MovieController {
 
   @Get()
   @ApiOperation({ summary: 'Get all movies' })
-  async getMovies(@Res() res: Response) {
+  async getMovies(
+    @Res() res: Response,
+    @Query() { skip, limit }: PaginationParams,
+  ) {
     const session = await this.mongoConnection.startSession();
     session.startTransaction();
     try {
-      let movies = await this.movieService.findAll();
+      let movies = await this.movieService.findAll({ skip, limit });
       await session.commitTransaction();
       return res.status(HttpStatus.OK).send(movies);
     } catch (error) {
       await session.abortTransaction();
+      console.log(error);
       throw new InternalServerErrorException(error);
     } finally {
       session.endSession();
