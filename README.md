@@ -32,7 +32,7 @@
 $ npm install
 ```
 
-## Running the app
+## Running the app (you will need to place the .env in the root of the folder to run the project)
 
 ```bash
 # development
