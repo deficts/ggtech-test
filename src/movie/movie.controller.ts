@@ -51,13 +51,12 @@ export class MovieController {
   @ApiOperation({ summary: 'Get one movie' })
   async getMovie(
     @Param('id') id: string,
-    @Body() updateMovieDto: CreateMovieDto,
     @Res() res: Response,
   ) {
     const session = await this.mongoConnection.startSession();
     session.startTransaction();
     try {
-      let movie = await this.movieService.updateOne(id, updateMovieDto);
+      let movie = await this.movieService.findOne(id);
       await session.commitTransaction();
       return res.status(HttpStatus.OK).send(movie);
     } catch (error) {
